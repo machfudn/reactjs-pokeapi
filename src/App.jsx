@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import Home from '@/pages/Home';
 import PokemonList from '@/pages/PokemonList';
 import PokemonDetail from '@/pages/PokemonDetail';
@@ -12,13 +13,36 @@ import SpeciesDetail from '@/pages/SpeciesDetail';
 import EvolutionDetail from '@/pages/EvolutionDetail';
 
 function App() {
+  const [showNav, setShowNav] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      // Sembunyikan saat scroll ke bawah, tampilkan saat scroll ke atas.
+      // Threshold 100px ditambahkan agar tidak langsung hilang saat scroll sedikit di bagian atas.
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setShowNav(false);
+      } else {
+        setShowNav(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <Router>
-      <nav className='bg-blue-600 w-2xl mx-auto rounded-xl text-white justify-between items-center px-4 py-2 flex gap-4'>
+      <nav
+        className={`bg-blue-600 w-2xl mx-auto rounded-xl text-white justify-between items-center px-4 py-2 flex gap-4 sticky top-4 z-50 transition-transform duration-300 ${
+          showNav ? 'translate-y-0' : '-translate-y-24'
+        }`}>
         <div>
-          <a href=''>
+          <Link to='/'>
             <img className='h-8' src='https://pokeapi.co/static/pokeapi_256.3fa72200.png' alt='' />
-          </a>
+          </Link>
         </div>
         <div className='flex gap-6'>
           <Link to='/'>Home</Link>
