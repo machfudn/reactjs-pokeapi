@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import pokeapi from '@/api/pokeapi';
+import Navbar from '@/components/Navbar';
 
 export default function TypeList() {
   const [types, setTypes] = useState([]);
@@ -12,7 +13,8 @@ export default function TypeList() {
   }, []);
 
   return (
-    <div>
+    <>
+      <Navbar />
       <h2 className='text-xl font-semibold mb-4'>List Types</h2>
       <ul className='grid grid-cols-2 gap-2'>
         {types.map(t => (
@@ -23,6 +25,6 @@ export default function TypeList() {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }
