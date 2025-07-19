@@ -26,7 +26,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`bg-blue-700 w-full max-w-6xl mx-auto rounded-xl text-white px-4 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sticky top-4 z-50 transition-transform duration-300 ${
+        className={`bg-blue-700 w-full max-w-xs md:max-w-6xl mx-auto rounded-xl text-white px-4 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sticky top-4 z-50 transition-transform duration-300 ${
           showNav ? 'translate-y-0' : '-translate-y-24'
         } relative`}>
         {/* Logo + Hamburger */}
@@ -62,7 +62,7 @@ export default function Navbar() {
 
         {/* Mobile Floating Menu */}
         {isMenuOpen && (
-          <div className='sm:hidden absolute top-full left-0 right-0 bg-blue-700 rounded-b-xl shadow-md transition-all duration-300 z-40'>
+          <div className='sm:hidden absolute top-full left-0 right-0 bg-blue-700 rounded-xl shadow-md mt-2 transition-all duration-300 z-40'>
             <div className='flex flex-col gap-2 px-4 py-3'>
               {[
                 ['Home', '/'],
