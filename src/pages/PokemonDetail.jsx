@@ -1,11 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import pokeapi from '@/api/pokeapi';
+import AbilityDetail from '@/pages/AbilityDetail';
 
 export default function PokemonDetail({ name, isOpen, onClose }) {
   const [pokemon, setPokemon] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedAbility, setSelectedAbility] = useState(null);
+  const [isAbilityModalOpen, setIsAbilityModalOpen] = useState(false);
   const modalRef = useRef(null); // 1. Ref ke modal utama
+
+  const openAbilityModal = abilityName => {
+    setSelectedAbility(abilityName);
+    setIsAbilityModalOpen(true);
+  };
+
+  const closeAbilityModal = () => {
+    setIsAbilityModalOpen(false);
+    setSelectedAbility(null);
+  };
 
   useEffect(() => {
     if (!name || !isOpen) return;
@@ -17,22 +30,56 @@ export default function PokemonDetail({ name, isOpen, onClose }) {
     });
   }, [name, isOpen]);
 
-  // 2. Event listener klik luar modal
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setPokemon(null);
+      setSelectedAbility(null);
+      setIsAbilityModalOpen(false);
+      setLoading(true);
+    }
+  }, [isOpen]);
+
+  // Handle click outside modal
   useEffect(() => {
     function handleClickOutside(event) {
+      // Don't close if Pokemon modal is open
+      if (isAbilityModalOpen) return;
+
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose(); // Tutup modal jika klik di luar elemen modal
+        onClose();
       }
     }
 
-    if (isOpen) {
+    if (isOpen && !isAbilityModalOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isAbilityModalOpen]);
+
+  // Handle escape key
+  useEffect(() => {
+    function handleEscapeKey(event) {
+      if (event.key === 'Escape') {
+        if (isAbilityModalOpen) {
+          closeAbilityModal();
+        } else if (isOpen) {
+          onClose();
+        }
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isOpen, isAbilityModalOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -83,17 +130,17 @@ export default function PokemonDetail({ name, isOpen, onClose }) {
             <p className='flex flex-wrap gap-1'>
               <strong className='mr-1'>Abilities:</strong>
               {pokemon.abilities.map(ability => (
-                <Link
-                  key={ability.ability.name}
-                  to={`/ability/${ability.ability.name}`}
+                <button
+                  onClick={() => openAbilityModal(ability.ability.name)}
                   className='bg-green-800 hover:underline capitalize px-2 rounded-full text-white'>
                   {ability.ability.name}
-                </Link>
+                </button>
               ))}
             </p>
           </div>
         </div>
       </div>
+      {isAbilityModalOpen && <AbilityDetail name={selectedAbility} isOpen={isAbilityModalOpen} onClose={closeAbilityModal} />}
     </div>
   );
 }
