@@ -86,7 +86,11 @@ export default function PokemonList() {
   }, [currentPage, pokemonData.results, searchTerm]);
 
   if (loading) {
-    return <div className='text-center mt-12'>Loading Pokémon...</div>;
+    return (
+      <div className='flex items-center justify-center h-screen gap-2'>
+        <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue-700 border-t-transparent'></div>Loading Pokémon...
+      </div>
+    );
   }
 
   return (
